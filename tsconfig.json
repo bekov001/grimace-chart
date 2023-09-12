@@ -15,7 +15,6 @@
     "noImplicitThis": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
-    "noUnusedLocals": true,
     "allowSyntheticDefaultImports": true
   },
   "exclude": [

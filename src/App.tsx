@@ -1,16 +1,14 @@
 import * as React from 'react';
 import './App.css';
-import { TVChartContainer } from './components/TVChartContainer/index';
+
+import MexcChart from "./components/mexcChart";
+import { getData } from './components/api/creator';
 
 const App = () => {
 	return (
 		<div className={ 'App' }>
-			<header className={ 'App-header' }>
-				<h1 className={ 'App-title' }>
-					MEXC
-				</h1>
-			</header>
-			<TVChartContainer />
+			<a onClick={() => getData()}>Gaydad</a>
+			<MexcChart></MexcChart>
 		</div>
 	);
 };

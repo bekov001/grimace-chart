@@ -6,7 +6,9 @@ import {
 	LanguageCode,
 	ResolutionString,
 } from '../../charting_library';
+
 import * as React from 'react';
+import api from '../api/test';
 
 export interface ChartContainerProps {
 	symbol: ChartingLibraryWidgetOptions['symbol'];
@@ -35,7 +37,7 @@ export const TVChartContainer = () => {
 	const chartContainerRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>;
 
 	const defaultProps: Omit<ChartContainerProps, 'container'> = {
-		symbol: 'AAL',
+		symbol: 'GRIMACEUSDT',
 		interval: 'D' as ResolutionString,
 		datafeedUrl: 'https://demo_feed.tradingview.com',
 		libraryPath: '/charting_library/',
@@ -53,7 +55,7 @@ export const TVChartContainer = () => {
 			symbol: defaultProps.symbol as string,
 			// BEWARE: no trailing slash is expected in feed URL
 			// tslint:disable-next-line:no-any
-			datafeed: new (window as any).Datafeeds.UDFCompatibleDatafeed(defaultProps.datafeedUrl),
+			datafeed: new api, //new (window as any).Datafeeds.UDFCompatibleDatafeed(defaultProps.datafeedUrl),
 			interval: defaultProps.interval as ChartingLibraryWidgetOptions['interval'],
 			container: chartContainerRef.current,
 			library_path: defaultProps.libraryPath as string,
@@ -68,11 +70,21 @@ export const TVChartContainer = () => {
 			fullscreen: defaultProps.fullscreen,
 			autosize: defaultProps.autosize,
 			studies_overrides: defaultProps.studiesOverrides,
+
 		};
+
+		// tvWidget.ge
+		// onReady: (callback) => {
+		// 	console.log('[onReady]: Method call');
+		// 	setTimeout(() => callback(configurationData));
+		// }
 
 		const tvWidget = new widget(widgetOptions);
 
 		tvWidget.onChartReady(() => {
+			tvWidget.setSymbol('AAL', '1D' as ResolutionString, () => {
+				// Your callback function
+			});
 			tvWidget.headerReady().then(() => {
 				const button = tvWidget.createButton();
 				button.setAttribute('title', 'Click to show a notification popup');
