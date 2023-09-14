@@ -6,14 +6,7 @@ import { ResolutionString } from '../../charting_library';
 import { getData } from './creator';
 
 
-const configurationData = {
-	supports_marks: false,
-	supports_timescale_marks: false,
-	supports_time: true,
-	supported_resolutions: [
-		'1', '3', '5', '15', '30', '60', '120', '240', '1D', '3D', '1W', '1M'
-	]
-};
+
 
 export default class API {
 
@@ -31,6 +24,25 @@ export default class API {
 	}
 
 	onReady(callback: Function)  {
+		const configurationData = {
+			supports_search: true,
+			supports_group_request: false,
+			supports_marks: true,
+			supports_timescale_marks: true,
+			supports_time: true,
+			exchanges: [
+				{ value: "", name: "All Exchanges", desc: "" },
+				{ value: "NasdaqNM", name: "NasdaqNM", desc: "NasdaqNM" },
+				{ value: "NYSE", name: "NYSE", desc: "NYSE" }
+			],
+			symbols_types: [
+				{ name: "All types", value: "" },
+				{ name: "Stock", value: "stock" },
+				{ name: "Index", value: "index" },
+				{ name: "Crypto", value: "crypto" }
+			],
+			supported_resolutions: ["60", "D", "2D", "3D", "W", "3W", "M", "6M"]
+		}
 		console.log('[onReady]: Method call');
 		setTimeout(() => callback(configurationData)) // callback must be called asynchronously.
 	}
@@ -41,7 +53,7 @@ export default class API {
 		symbolType : string,
 		onResultReadyCallback : any,
 	) {
-		// console.log('[searchSymbols]: Method call');
+		console.log('[searchSymbols]: Method call');
 		//
 		// const symbols = axios.get("https://api.mexc.com/api/v3/defaultSymbols", {
 		// 	headers: {
@@ -52,19 +64,37 @@ export default class API {
 		// console.log(symbols)
 		//
 		// // const symbols = await getMatchingSymbolsFromBackend(userInput, exchange, symbolType);
-		// onResultReadyCallback(symbols);
+		onResultReadyCallback([{
+								  symbol: "GRIMACEUSDT",
+								  full_name: "GRIMACEUSDT",
+								  description: "symbol.baseAsset + ' / ' + symbol.quoteAsset",
+								  ticker: "GRIMACEUSDT",
+								  exchange: 'mexc',
+								  type: 'crypto'
+							  }]);
 	}
 
-	getBars(symbolInfo: any, resolution: ResolutionString, periodParams: any, onResult: any, onError: any, ) {
+	getBars(symbolInfo: any, resolution: any, periodParams: any, onHistoryCallback: any, onErrorCallback: any, ) {
 		// const interval = this.ws.tvIntervals[resolution]
 		// // if (!interval) {
 		// // 	onErrorCallback('Invalid interval')
 		// // }
-		//
+		console.log('[getBars]: Method call');
+		// if(symbolInfo.name === 'GRIMACEUSDT' && resolution === '1h'){
+			const klines = getData().then(data => {
+				if (data.length) {
+					console.log(data);
+					onHistoryCallback(data, {noData: false,})
 
-		const klines = getData()
-		console.log(klines);
-		onResult(klines, {noData: false})
+				} else {
+					onHistoryCallback([], {
+						noData: true
+					});
+		}}).catch(err => console.log(err))
+
+			// console.log(klines);
+			// onHistoryCallback(klines)
+		// }
 		// let totalKlines = []
 		// const kLinesLimit = 500
 		// const finishKlines = () => {
@@ -123,22 +153,20 @@ export default class API {
 		// for (let symbol of this.symbols) {
 		// 	if (symbol.symbol == symbolName) {
 		// 		setTimeout(() => {
-		// 			onSymbolResolvedCallback({
-		// 										 name: symbol.symbol,
-		// 										 description: symbol.baseAsset + ' / ' + symbol.quoteAsset,
-		// 										 ticker: symbol.symbol,
-		// 										 exchange: 'Binance',
-		// 										 listed_exchange: 'Binance',
-		// 										 type: 'crypto',
-		// 										 session: '24x7',
-		// 										 minmov: 1,
-		// 										 pricescale: pricescale(symbol),
-		// 										 // timezone: 'UTC',
-		// 										 has_intraday: true,
-		// 										 has_daily: true,
-		// 										 has_weekly_and_monthly: true,
-		// 										 currency_code: symbol.quoteAsset
-		// 									 })
+					onSymbolResolvedCallback({
+												 name: "GRIMACEUSDT",
+												 description: "GRIMACEUSDT",
+												 ticker: "GRIMACEUSDT",
+												 exchange: 'mexc',
+												 listed_exchange: 'mexc',
+												 type: 'crypto',
+												 session: '24x7',
+												 minmov: 1,
+												 // timezone: 'UTC',
+												 has_intraday: true,
+												 has_daily: true,
+												 has_weekly_and_monthly: true,
+											 })
 		// 		}, 0)
 		// 		return
 		// 	}
@@ -149,9 +177,22 @@ export default class API {
 	}
 
 	subscribeBars(symbolInfo: any, resolution: any, onRealtimeCallback: any, subscriberUID: any, onResetCacheNeededCallback: any) {
+		// const klines = getData().then(data => {
+		// 	if (data.length) {
+		// 		console.log(data);
+		// 		setInterval(onRealtimeCallback(data.slice(-1)[0]), 100)
+		//
+		// 	} else {
+		// 		onRealtimeCallback([], {
+		// 			noData: true
+		// 		});
+		// 	}}).catch(err => console.log(err))
+		// const klines = getData()
+		// console.log(klines);
+		// onResult(klines, {noData: false})
 		// this.ws.subscribeOnStream(symbolInfo, resolution, onRealtimeCallback, subscriberUID, onResetCacheNeededCallback)
 	}
-
+	//
 	unsubscribeBars(subscriberUID: any) {
 		// this.ws.unsubscribeFromStream(subscriberUID)
 	}

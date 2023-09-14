@@ -38,7 +38,7 @@ export const TVChartContainer = () => {
 
 	const defaultProps: Omit<ChartContainerProps, 'container'> = {
 		symbol: 'GRIMACEUSDT',
-		interval: 'D' as ResolutionString,
+		interval: '60' as ResolutionString,
 		datafeedUrl: 'https://demo_feed.tradingview.com',
 		libraryPath: '/charting_library/',
 		chartsStorageUrl: 'https://saveload.tradingview.com',
@@ -52,6 +52,7 @@ export const TVChartContainer = () => {
 
 	useEffect(() => {
 		const widgetOptions: ChartingLibraryWidgetOptions = {
+			debug: true,
 			symbol: defaultProps.symbol as string,
 			// BEWARE: no trailing slash is expected in feed URL
 			// tslint:disable-next-line:no-any
@@ -82,7 +83,7 @@ export const TVChartContainer = () => {
 		const tvWidget = new widget(widgetOptions);
 
 		tvWidget.onChartReady(() => {
-			tvWidget.setSymbol('AAL', '1D' as ResolutionString, () => {
+			tvWidget.setSymbol('GRIMACEUSDT', '60' as ResolutionString, () => {
 				// Your callback function
 			});
 			tvWidget.headerReady().then(() => {
