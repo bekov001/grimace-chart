@@ -41,7 +41,7 @@ export default class API {
 				{ name: "Index", value: "index" },
 				{ name: "Crypto", value: "crypto" }
 			],
-			supported_resolutions: ["60", "D", "2D", "3D", "W", "3W", "M", "6M"]
+			supported_resolutions: ["5", "60", "D", "2D", "3D", "W", "3W", "M", "6M"]
 		}
 		console.log('[onReady]: Method call');
 		setTimeout(() => callback(configurationData)) // callback must be called asynchronously.

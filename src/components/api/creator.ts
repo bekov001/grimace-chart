@@ -47,10 +47,16 @@ export function sort_by_time(trades: ITrade[]){
 	let data: {[time: string]: ITrade[]}= {}
 
 	for (let i = 0; i < 24; i++){
-		data[(i < 10 ? "0" : "") + i + ":00:00"] = trades.filter(function (trade) {
-			let hour = trade.time.split(" ")[1].split(":")[0];
-			return Number(hour) == i;
-		})
+		for (let j = 0; j < 12; j++) {
+			data[(i < 10 ? "0" : "") + i + ":" + (j * 5 < 10 ? "0" : "") + j * 5 + ":00"] = trades.filter(function (trade) {
+				let minutes = trade.time.split(" ")[1].split(":")[1];
+				let res = Math.floor(parseInt(minutes) / 5) * 5
+				let hour = trade.time.split(" ")[1].split(":")[0] + ':' +  (res < 10 ? "0" : "") + res;
+				console.log(hour)
+				return (hour) == (i < 10 ? "0" : "") + i + ":" + (j < 2 ? "0" : "") + j*5 ;
+			})
+		}
+
 	}
 	return data;
 
@@ -58,10 +64,25 @@ export function sort_by_time(trades: ITrade[]){
 
 export function group(data: ITrade[]){
 	const trades = (sort_by_time(data));
-
+	console.log(trades)
 	let klines: TVKlines[] = []
+	let close = 0.1;
+	// for (let i = 0; i < 24; i++){
+	// 	klines.push(
+	// 		{
+	// 			// Date("1995-12-17T03:24:00")
+	// 			time: new Date("2023-09-14T" + (i < 10 ? "0" : "") + i + ":" + "00"+ ).getTime() / 1000,
+	// 			open: (close),
+	// 			high: (close),
+	// 			low: (close),
+	// 			close: close
+	// 			// volume: volume
+	// 		}
+	// 	)
+	// }
 	Object.entries(trades).forEach(value => {
 		const [time, localTrades] = value;
+
 		if (localTrades.length > 0){
 			const max = localTrades.reduce(
 				(prev, current) => {
@@ -76,15 +97,28 @@ export function group(data: ITrade[]){
 			let volume = localTrades.reduce((a, b) => {
 				return a + parseFloat(b.price);
 			}, 0);
+			close = parseFloat(localTrades.slice(-1)[0].price);
 			console.log("2023-09-14T"+ time)
 			klines.push(
 				{
 					// Date("1995-12-17T03:24:00")
-					time: new Date("2023-09-14T" + time).getTime() / 1000,
+					time: new Date("2023-09-15T " + time).getTime() / 1000,
 					open: parseFloat(localTrades[0].price),
 					high: parseFloat(max.price),
 					low: parseFloat(min.price),
-					close: parseFloat(localTrades.slice(-1)[0].price)
+					close: close
+					// volume: volume
+				}
+			)
+		} else {
+			klines.push(
+				{
+					// Date("1995-12-17T03:24:00")
+					time: new Date("2023-09-15T " + time).getTime() / 1000,
+					open: (close),
+					high: (close),
+					low: (close),
+					close: close
 					// volume: volume
 				}
 			)
