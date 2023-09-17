@@ -35,10 +35,10 @@ const getLanguageFromURL = (): LanguageCode | null => {
 
 export const TVChartContainer = () => {
 	const chartContainerRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>;
-
+	const interval = '720';
 	const defaultProps: Omit<ChartContainerProps, 'container'> = {
 		symbol: 'GRIMACEUSDT',
-		interval: '60' as ResolutionString,
+		interval: interval as ResolutionString,
 		datafeedUrl: 'https://demo_feed.tradingview.com',
 		libraryPath: '/charting_library/',
 		chartsStorageUrl: 'https://saveload.tradingview.com',
@@ -83,7 +83,7 @@ export const TVChartContainer = () => {
 		const tvWidget = new widget(widgetOptions);
 
 		tvWidget.onChartReady(() => {
-			tvWidget.setSymbol('GRIMACEUSDT', '60' as ResolutionString, () => {
+			tvWidget.setSymbol('GRIMACEUSDT', interval as ResolutionString, () => {
 				// Your callback function
 			});
 			tvWidget.headerReady().then(() => {

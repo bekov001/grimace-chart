@@ -2,8 +2,9 @@
 
 import axios from 'axios';
 import binanceWS from './helpers';
-import { ResolutionString } from '../../charting_library';
+// import { ResolutionString } from '../../charting_library';
 import { getData } from './creator';
+import { DATA, cut, get } from './data';
 
 
 
@@ -41,7 +42,7 @@ export default class API {
 				{ name: "Index", value: "index" },
 				{ name: "Crypto", value: "crypto" }
 			],
-			supported_resolutions: ["5", "60", "D", "2D", "3D", "W", "3W", "M", "6M"]
+			supported_resolutions: ["5", "15", "60", "720", "D", "2D", "3D", "W", "3W", "M", "6M"]
 		}
 		console.log('[onReady]: Method call');
 		setTimeout(() => callback(configurationData)) // callback must be called asynchronously.
@@ -80,17 +81,23 @@ export default class API {
 		// // 	onErrorCallback('Invalid interval')
 		// // }
 		console.log('[getBars]: Method call');
-		// if(symbolInfo.name === 'GRIMACEUSDT' && resolution === '1h'){
-			const klines = getData().then(data => {
-				if (data.length) {
-					console.log(data);
-					onHistoryCallback(data, {noData: false,})
+		console.log(periodParams);
+		let data = cut(periodParams.from, periodParams.to)
 
-				} else {
-					onHistoryCallback([], {
-						noData: true
-					});
-		}}).catch(err => console.log(err))
+		onHistoryCallback(data)
+		console.log(data)
+		// onHistoryCallback([])
+		// // if(symbolInfo.name === 'GRIMACEUSDT' && resolution === '1h'){
+		// 	const klines = getData(periodParams.from, periodParams.to).then(data => {
+		// 		if (data.length) {
+		// 			console.log(data);
+		// 			onHistoryCallback(data, {noData: false,})
+
+		// 		} else {
+		// 			onHistoryCallback([], {
+		// 				noData: true
+		// 			});
+		// }}).catch((err) => onHistoryCallback([], {nextTime: true}))
 
 			// console.log(klines);
 			// onHistoryCallback(klines)
