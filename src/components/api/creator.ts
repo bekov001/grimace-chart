@@ -31,7 +31,7 @@ export interface TVKlines {
  function to_time(timestamp: string | undefined){
 	if (timestamp){
 	let date = new Date(parseInt(timestamp) * 1000);
-	console.log(date, date.getMonth())
+
 	let datetime = [("0" + date.getDate()).substr(-2), ("0" + ((date.getMonth()) + 1)).substr(-2), date.getFullYear()].join(".")
 	var hours = date.getHours();
 
@@ -72,7 +72,7 @@ export function getData(from?: string, to?: string){
 	// 	data.timeEnd = to_time(to)
 	// }
 
-	console.log(data)
+
 	const promise = axios.post("https://5.53.127.139:5000/exchange/quotes", data
 	)
 
@@ -118,8 +118,7 @@ function time_manage(trades: ITrade[]){
 	
 	
 	let now = (stardard_time(dayjs().format("DD.MM.YYYY HH:mm:ss SSS Z"), minutes_res));
-	
-	console.log(now);
+
 	let elem = trades[i]
 	while (current_time != now){
 		if (i == trades.length){
@@ -137,10 +136,9 @@ function time_manage(trades: ITrade[]){
 			data[current_time] = []
 			// data[]
 		}
-		console.log(current_time)
+
 	}
 
-	console.log(data)
 
 	return data;
 	
@@ -152,7 +150,7 @@ export function group(data: ITrade[]){
 	const trades = Object.entries(time_manage(data)).sort((a, b) => {
 		return (dayjs(a[0], "DD.MM.YYYY HH:mm").isAfter(dayjs(b[0], "DD.MM.YYYY HH:mm")) ? 1 : -1)
 	});
-	console.log(trades)
+
 	let klines: TVKlines[] = []
 	let close = 0.1;
 	
@@ -174,12 +172,12 @@ export function group(data: ITrade[]){
 				return a + parseFloat(b.price);
 			}, 0);
 			close = parseFloat(localTrades.slice(-1)[0].price);
-			console.log(time)
+
 			// dayjs(time, "DD.MM.YYYY HH:mm:ss SSS Z").unix()
 			klines.push(
 				{
 					// Date("1995-12-17T03:24:00")
-					time: dayjs(time, "DD.MM.YYYY HH:mm").unix(),
+					time: dayjs(time, "DD.MM.YYYY HH:mm").valueOf(),
 					open: parseFloat(localTrades[0].price),
 					high: parseFloat(max.price),
 					low: parseFloat(min.price),
@@ -191,7 +189,7 @@ export function group(data: ITrade[]){
 			klines.push(
 				{
 					// Date("1995-12-17T03:24:00")
-					time: dayjs(time, "DD.MM.YYYY HH:mm").unix(),
+					time: dayjs(time, "DD.MM.YYYY HH:mm").valueOf(),
 					open: (close),
 					high: (close),
 					low: (close),
@@ -203,6 +201,5 @@ export function group(data: ITrade[]){
 
 
 	})
-	// console.log(klines)
 	return klines
 }

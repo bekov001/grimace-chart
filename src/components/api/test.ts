@@ -83,16 +83,16 @@ export default class API {
 		console.log('[getBars]: Method call');
 		console.log(periodParams);
 		// let data = cut(periodParams.from, periodParams.to)
-		let data = getSliceOfArrayByTimestamp(periodParams.from, periodParams.to)
+		const klines = getData().then(array => {
+			let data = getSliceOfArrayByTimestamp(array, periodParams.from * 1000, periodParams.to * 1000)
 
-		if (data){
-			onHistoryCallback(data)
-			console.log(data, periodParams.from, periodParams.to)
-		} else {
-			onHistoryCallback([], {noData: true})
-		}
-
-		// const klines = getData().then(data => {console.log(data);})
+			if (data){
+				onHistoryCallback(data)
+				console.log(data, periodParams.from, periodParams.to)
+			} else {
+				onHistoryCallback([], {noData: true})
+			}
+		})
 
 
 		// onHistoryCallback([])
