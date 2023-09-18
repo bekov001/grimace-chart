@@ -4,7 +4,7 @@ import axios from 'axios';
 import binanceWS from './helpers';
 // import { ResolutionString } from '../../charting_library';
 import { getData } from './creator';
-import { DATA, cut, get } from './data';
+import { DATA, get, getSliceOfArrayByTimestamp } from './data';
 
 
 
@@ -82,10 +82,19 @@ export default class API {
 		// // }
 		console.log('[getBars]: Method call');
 		console.log(periodParams);
-		let data = cut(periodParams.from, periodParams.to)
+		// let data = cut(periodParams.from, periodParams.to)
+		let data = getSliceOfArrayByTimestamp(periodParams.from, periodParams.to)
 
-		onHistoryCallback(data)
-		console.log(data)
+		if (data){
+			onHistoryCallback(data)
+			console.log(data, periodParams.from, periodParams.to)
+		} else {
+			onHistoryCallback([], {noData: true})
+		}
+
+		// const klines = getData().then(data => {console.log(data);})
+
+
 		// onHistoryCallback([])
 		// // if(symbolInfo.name === 'GRIMACEUSDT' && resolution === '1h'){
 		// 	const klines = getData(periodParams.from, periodParams.to).then(data => {

@@ -103,7 +103,7 @@ function add_time(time: string, add: number){
 }
 
 function time_manage(trades: ITrade[]){
-	const minutes_res = 720;
+	const minutes_res = 240;
 
 	trades.sort(function (a, b) {
 		return (dayjs(a.time, "DD.MM.YYYY HH:mm:ss SSS Z").isAfter(dayjs(b.time, "DD.MM.YYYY HH:mm:ss SSS Z")) ? 1 : -1)

@@ -35,7 +35,7 @@ const getLanguageFromURL = (): LanguageCode | null => {
 
 export const TVChartContainer = () => {
 	const chartContainerRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>;
-	const interval = '720';
+	const interval = '240';
 	const defaultProps: Omit<ChartContainerProps, 'container'> = {
 		symbol: 'GRIMACEUSDT',
 		interval: interval as ResolutionString,
