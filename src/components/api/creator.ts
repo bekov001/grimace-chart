@@ -48,6 +48,45 @@ var formattedTime = datetime + " " + hours + ':' + minutes.substr(-2) + ':' + se
 	return ""
  }
 
+
+export function getRawData(from?: string, to?: string){
+	// group
+	// let result;
+
+	let data : {
+		"token1": string,
+		"token2": string,
+		"timeStart"?: string,
+		"timeEnd"?: string,
+	} = {
+		"token1": "grimace",
+		"token2": "wdoge",
+		// timeStart : "05.09.2023 00:00:00 000 +00:00"
+	}
+	// if (from && parseInt(from) < 1600000000 || to && parseFloat(to) < 1600000000){
+	// 	data.timeStart = to_time(from)
+	// 	data.timeEnd = to_time(to)
+	// }
+	// if (from && to){
+
+	// 	data.timeStart = to_time(from)
+	// 	data.timeEnd = to_time(to)
+	// }
+
+
+	const promise = axios.post("https://5.53.127.139:5000/exchange/quotes", data
+	)
+
+	const dataPromise = promise.then(response => {
+		// time_manage(response.data)
+		// return []
+		return (response.data)
+	}).catch(err => (err))
+	return dataPromise;
+
+}
+
+
 export function getData(from?: string, to?: string){
 	// group
 	// let result;
@@ -143,6 +182,45 @@ function time_manage(trades: ITrade[]){
 	return data;
 	
 
+}
+
+
+export function getBuysSells(data: any, address: string){
+	const minutes_res = 240;
+	let src: any[] = []
+	let id = 1
+
+	data.sort(function (a: any, b: any) {
+		return (dayjs(a.time, "DD.MM.YYYY HH:mm:ss SSS Z").isAfter(dayjs(b.time, "DD.MM.YYYY HH:mm:ss SSS Z")) ? 1 : -1)
+	});
+
+	data.forEach((item: any, index: number) => {
+		if (item.addr1 == address){
+			if (item.buy){
+				src.push( {
+							  id: id,
+							  time: dayjs(stardard_time(item.time, minutes_res), "DD.MM.YYYY HH:mm").valueOf() / 1000,
+							  color: "green",
+							  label: "B",
+
+							  labelFontColor: 'white',
+							  minSize: 25
+						  })
+			} else {
+				src.push( {
+							  id: id,
+							  time: dayjs(stardard_time(item.time, minutes_res), "DD.MM.YYYY HH:mm").valueOf() / 1000,
+							  color: "red",
+							  label: "S",
+							  labelFontColor: 'white',
+							  minSize: 25
+						  })
+			}
+
+			id ++
+		}
+	})
+	return src
 }
 
 

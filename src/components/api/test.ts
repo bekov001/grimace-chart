@@ -3,9 +3,11 @@
 import axios from 'axios';
 import binanceWS from './helpers';
 // import { ResolutionString } from '../../charting_library';
-import { getData } from './creator';
-import { DATA, get, getSliceOfArrayByTimestamp } from './data';
+import { getBuysSells, getData, getRawData } from './creator';
+import { DATA, get, getSliceOfArrayByTimestamp, getSliceOfMarksByTimestamp } from './data';
 
+
+const OWN_ADDRESS = "0x5a1A14A608A14634B49075659Ce096a7d9A52602"
 
 
 
@@ -75,6 +77,23 @@ export default class API {
 							  }]);
 	}
 
+	getMarks(symbolInfo: any, startDate: any, endDate: any, onDataCallback: any, resolution: any){
+		console.log('getMarks');
+		const klines = getRawData().then(array => {
+			let src = getSliceOfMarksByTimestamp(getBuysSells(array, OWN_ADDRESS), startDate , endDate )
+			console.log(src, startDate, endDate)
+			if (src){
+
+				onDataCallback(src)
+			}
+
+
+
+		})
+
+
+
+	}
 	getBars(symbolInfo: any, resolution: any, periodParams: any, onHistoryCallback: any, onErrorCallback: any, ) {
 		// const interval = this.ws.tvIntervals[resolution]
 		// // if (!interval) {

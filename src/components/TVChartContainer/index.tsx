@@ -72,6 +72,7 @@ export const TVChartContainer = () => {
 			autosize: defaultProps.autosize,
 			studies_overrides: defaultProps.studiesOverrides,
 
+
 		};
 
 		// tvWidget.ge

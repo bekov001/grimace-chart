@@ -2891,3 +2891,24 @@ export function getSliceOfArrayByTimestamp(array: { time: number, open: number, 
     // Return the results array
     return results;
 }
+
+
+export function getSliceOfMarksByTimestamp(array: { time: number, open: number, close: number, low: number, high: number }[], from: number, to: number) {
+    // Sort the array by tim
+    array.sort((a, b) => a.time - b.time);
+    console.log(array)
+    // Create an empty array to store the results
+    const results = [];
+
+    // Iterate over the array
+    for (const item of array) {
+        // If the timestamp is in the range, add the item to the results array
+        if (item.time >= from && item.time <= to) {
+            results.push(item);
+        }
+    }
+    results.sort((a, b) => a.time - b.time);
+
+    // Return the results array
+    return results;
+}
