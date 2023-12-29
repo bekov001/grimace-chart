@@ -77,13 +77,76 @@ export default class API {
 							  }]);
 	}
 
+
+	getTimescaleMarks = (
+		symbolInfo: any,
+		startDate: any,
+		endDate: any,
+		onDataCallback: any
+	) => {
+		// optional
+		console.log('getTimescaleMarks');
+
+		let marks = [];
+
+		if (symbolInfo.name === 'AAPL') {
+			marks = [
+				{
+					id: 1,
+					time: startDate,
+					color: 'red',
+					label: 'Aa',
+					minSize: 30,
+					tooltip: [
+						'Lorem',
+						'Ipsum',
+						'Dolor',
+						'Sit',
+					]
+				},
+				{
+					id: 2,
+					time: startDate + 5260000, // 2 months
+					color: 'blue',
+					label: 'B',
+					minSize: 30,
+					tooltip: [
+						'Amet',
+						'Consectetur',
+						'Adipiscing',
+						'Elit',
+					]
+				}
+			];
+		} else {
+			marks = [
+				{
+					id: 'String id',
+					time: endDate,
+					color: 'red',
+					label: 'T',
+					shape: "earning",
+
+					tooltip: [
+						'Amet',
+						'Consectetur',
+						'Adipiscing',
+						'Elit',
+					]
+				}
+			];
+		}
+
+		onDataCallback(marks);
+	};
+
 	getMarks(symbolInfo: any, startDate: any, endDate: any, onDataCallback: any, resolution: any){
 		console.log('getMarks');
 		const klines = getRawData().then(array => {
+			console.log(array)
 			let src = getSliceOfMarksByTimestamp(getBuysSells(array, OWN_ADDRESS), startDate , endDate )
-			console.log(src, startDate, endDate)
-			if (src){
 
+			if (src){
 				onDataCallback(src)
 			}
 

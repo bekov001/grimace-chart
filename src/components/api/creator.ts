@@ -19,6 +19,23 @@ export interface ITrade {
 }
 
 
+export interface IOrder {
+	id: string,
+	addr: string,
+	amount: string,
+	blockedCosts: string,
+	buy: boolean,
+	orderID: string,
+	price: string,
+	sell: boolean,
+	status: string,
+	orderBlocked: boolean,
+	time: string,
+	token1: string,
+	token2: string,
+	type: string
+}
+
 export interface TVKlines {
 	time: number,
 	open: number,
@@ -189,22 +206,56 @@ export function getBuysSells(data: any, address: string){
 	const minutes_res = 240;
 	let src: any[] = []
 	let id = 1
-
+	const {asks, bids, ownOrders} = separate(data, address)
 	data.sort(function (a: any, b: any) {
 		return (dayjs(a.time, "DD.MM.YYYY HH:mm:ss SSS Z").isAfter(dayjs(b.time, "DD.MM.YYYY HH:mm:ss SSS Z")) ? 1 : -1)
 	});
 
+	ownOrders.forEach((item: any, index: number) => {
+		const item_time = dayjs(item.time, "DD.MM.YYYY HH:mm:ss SSS Z").format("DD.MM HH:mm")
+		const volume = 100
+		if (item.buy){
+			src.push( {
+						  id: id,
+						  time: dayjs(stardard_time(item.time, minutes_res), "DD.MM.YYYY HH:mm").valueOf() / 1000,
+						  color: "green",
+						  label: "Ʌ",
+						  text: [item_time + "; price " + item.price + "; vol " + volume],
+						  labelFontColor: 'white',
+						  minSize: 25,
+						  shape: "earningUp",
+					  })
+		} else {
+			src.push( {
+						  id: id,
+						  time: dayjs(stardard_time(item.time, minutes_res), "DD.MM.YYYY HH:mm").valueOf() / 1000,
+						  color: "red",
+						  label: "Ʌ",
+						  text: [item_time + "; price " + item.price + "; vol" + volume],
+						  labelFontColor: 'white',
+						  minSize: 25,
+						  shape: "earningUp",
+					  })
+		}
+
+		id ++
+
+	})
+	id = 1
 	data.forEach((item: any, index: number) => {
 		if (item.addr1 == address){
+			const item_time = dayjs(item.time, "DD.MM.YYYY HH:mm:ss SSS Z").format("DD.MM HH:mm")
+			const volume = 100
 			if (item.buy){
 				src.push( {
 							  id: id,
 							  time: dayjs(stardard_time(item.time, minutes_res), "DD.MM.YYYY HH:mm").valueOf() / 1000,
 							  color: "green",
 							  label: "B",
-
+								text: [item_time + "; price " + item.price + "; vol " + volume],
 							  labelFontColor: 'white',
-							  minSize: 25
+							  minSize: 25,
+							  shape: "earningUp",
 						  })
 			} else {
 				src.push( {
@@ -212,8 +263,10 @@ export function getBuysSells(data: any, address: string){
 							  time: dayjs(stardard_time(item.time, minutes_res), "DD.MM.YYYY HH:mm").valueOf() / 1000,
 							  color: "red",
 							  label: "S",
+							  text: [item_time + "; price " + item.price + "; vol" + volume],
 							  labelFontColor: 'white',
-							  minSize: 25
+							  minSize: 25,
+							  shape: "earningUp",
 						  })
 			}
 
@@ -223,11 +276,35 @@ export function getBuysSells(data: any, address: string){
 	return src
 }
 
+function separate(orders: IOrder[], address: string){
+	let asks: number[][] = [];
+	let bids: number[][] = [];
+	let ownOrders: string[] = []
+	orders.forEach((elem) => {
+		if(elem.type === 'limit' && !elem.orderBlocked && elem.status === 'pending'){
+			if (elem.addr == address) {
+				ownOrders.push(elem.price)
+			}
+
+			if (elem.sell){
+				asks.push([parseFloat(elem.price), parseFloat(elem.amount)])
+			} else {
+				bids.push([parseFloat(elem.price), parseFloat(elem.amount)])
+			}
+
+		}
+
+	})
+
+	return {asks, bids, ownOrders};
+}
+
 
 export function group(data: ITrade[]){
 	const trades = Object.entries(time_manage(data)).sort((a, b) => {
 		return (dayjs(a[0], "DD.MM.YYYY HH:mm").isAfter(dayjs(b[0], "DD.MM.YYYY HH:mm")) ? 1 : -1)
 	});
+
 
 	let klines: TVKlines[] = []
 	let close = 0.1;
